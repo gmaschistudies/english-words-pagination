@@ -28,23 +28,14 @@ const IndexNavigation: React.FC<Props> = ({
       <button
         key={idx}
         id={String.fromCharCode(idx + 97)}
-        className={
-          String.fromCharCode(idx + 97) === currentLetter
-            ? "actual-index-button"
-            : "index-button"
-        }
+        className={buttonClass(idx, currentLetter)}
         onClick={onButtonClick}
       >
-        {idx === 0 || idx === 25 || idx === currentLetter.charCodeAt(0) % 97
-          ? idx + 1
-          : // : idx === (currentLetter.charCodeAt(0) % 97) + 1
-          previousLetter === String.fromCharCode(idx + 97)
-          ? "<"
-          : ">"}
+        {buttonTag(idx, currentLetter)}
       </button>
     );
   });
-
+  // previousLetter === String.fromCharCode(idx + 97)
   console.log(`previous: ${previousLetter}, next: ${nextLetter}`);
   return (
     <>
@@ -54,7 +45,8 @@ const IndexNavigation: React.FC<Props> = ({
             idx === buttonsArray.length - 1 ||
             currentLetter === e.props.id ||
             e.props.id === previousLetter ||
-            e.props.id === nextLetter
+            e.props.id === nextLetter ||
+            Math.abs(idx - (currentLetter.charCodeAt(0) % 97)) === 2
             ? e
             : null; //porquice, como trocar a classe aqui para estilizar o elemento atual, não consigo atribuir valor pra className
           //qual o jeito mais inteligente de colocar uma só div com reticências entre os eelementos, e não uma div pra cada um no map?
@@ -62,6 +54,26 @@ const IndexNavigation: React.FC<Props> = ({
       </div>
     </>
   );
+};
+
+const buttonTag = (index: number, letter: string) => {
+  return index === 0 ||
+    index === 25 ||
+    Math.abs(index - (letter.charCodeAt(0) % 97)) < 2
+    ? index + 1
+    : index - (letter.charCodeAt(0) % 97) === -2
+    ? "<<"
+    : index - (letter.charCodeAt(0) % 97) === 2
+    ? ">>"
+    : null;
+};
+
+const buttonClass = (index: number, letter: string) => {
+  return String.fromCharCode(index + 97) === letter
+    ? "actual-index-button"
+    : Math.abs(index - (letter.charCodeAt(0) % 97)) === 2
+    ? "previous-next-button"
+    : "index-button";
 };
 
 export default IndexNavigation;
