@@ -5,6 +5,8 @@ interface Props {
   handleChange: (e: string) => void;
 }
 
+const sidePages = 1;
+
 const IndexNavigation: React.FC<Props> = ({
   currentLetter,
   handleChange,
@@ -44,9 +46,7 @@ const IndexNavigation: React.FC<Props> = ({
           return idx === 0 ||
             idx === buttonsArray.length - 1 ||
             currentLetter === e.props.id ||
-            e.props.id === previousLetter ||
-            e.props.id === nextLetter ||
-            Math.abs(idx - (currentLetter.charCodeAt(0) % 97)) === 2
+            Math.abs(idx - (currentLetter.charCodeAt(0) % 97)) <= sidePages + 1
             ? e
             : null; //porquice, como trocar a classe aqui para estilizar o elemento atual, não consigo atribuir valor pra className
           //qual o jeito mais inteligente de colocar uma só div com reticências entre os eelementos, e não uma div pra cada um no map?
@@ -57,13 +57,14 @@ const IndexNavigation: React.FC<Props> = ({
 };
 
 const buttonTag = (index: number, letter: string) => {
+  console.log(Math.abs(index - (letter.charCodeAt(0) % 97)));
   return index === 0 ||
     index === 25 ||
-    Math.abs(index - (letter.charCodeAt(0) % 97)) < 2
+    Math.abs(index - (letter.charCodeAt(0) % 97)) < sidePages + 1
     ? index + 1
-    : index - (letter.charCodeAt(0) % 97) === -2
+    : index - (letter.charCodeAt(0) % 97) === -(sidePages + 1)
     ? "<<"
-    : index - (letter.charCodeAt(0) % 97) === 2
+    : index - (letter.charCodeAt(0) % 97) === sidePages + 1
     ? ">>"
     : null;
 };
@@ -71,7 +72,7 @@ const buttonTag = (index: number, letter: string) => {
 const buttonClass = (index: number, letter: string) => {
   return String.fromCharCode(index + 97) === letter
     ? "actual-index-button"
-    : Math.abs(index - (letter.charCodeAt(0) % 97)) === 2
+    : Math.abs(index - (letter.charCodeAt(0) % 97)) === sidePages + 1
     ? "previous-next-button"
     : "index-button";
 };
